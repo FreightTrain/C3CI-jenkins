@@ -1,9 +1,8 @@
 ---
+final_name: jenkins
+min_cli_version: 0.1
 blobstore:
   provider: s3
   options:
-    bucket_name: jenkins-boshrelease
-    access_key_id: AKIAJPWUHOHV42IMTNQQ
-    secret_access_key: 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
-    encryption_key: PERSONAL_RANDOM_KEY
-final_name: jenkins
+    host: s3-eu-west-1.amazonaws.com
+    bucket_name: c3ci-blobstore

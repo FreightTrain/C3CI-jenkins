@@ -6,15 +6,11 @@ set -u # report the usage of uninitialized variables
 # Setup env vars and folders for the webapp_ctl script
 source /var/vcap/jobs/jenkins_master/helpers/ctl_setup.sh 'jenkins_master'
 
-export PATH=/var/vcap/packages/git/bin:$PATH
-export PATH=/var/vcap/packages/cf-cli/bin:$PATH
-export PATH=/var/vcap/packages/bosh-cli/bin:$PATH
-export GEM_PATH=/var/vcap/packages/bosh-cli/vendor/bundle/ruby/1.9.1
-
 export LANG=en_US.UTF-8
 export JENKINS_HOME=/var/vcap/store/jenkins_master
-java_binary=/var/vcap/packages/jre/bin/java
+java_binary=/var/vcap/packages/java/bin/java
 jenkins_war=/var/vcap/packages/jenkins/jenkins.war
+gems_home=/var/vcap/store/gems
 
 case $1 in
 
@@ -23,7 +19,14 @@ case $1 in
 
     echo $$ > $PIDFILE
 
+    mkdir -p $gems_home
+    chown vcap:vcap $gems_home -R
     mkdir -p $JENKINS_HOME
+
+    cp $JOB_DIR/config/netrc /home/vcap/.netrc
+    chown vcap:vcap /home/vcap/.netrc
+    cp $JOB_DIR/config/hudson.plugins.s3.S3BucketPublisher.xml ${JENKINS_HOME}/
+    chown vcap:vcap ${JENKINS_HOME}/hudson.plugins.s3.S3BucketPublisher.xml
 
     flags=(
       -Djava.io.tmpdir="$TMPDIR"

@@ -63,3 +63,7 @@ ruby/rubygems-2.0.7.tgz:
   object_id: 1fb44dab-8b28-4937-84cc-b0f3b98597f8
   sha: f0b0a03d573e21125ba5da1db14461d6a99340d4
   size: 337146
+sqlite/sqlite-autoconf-3070500.tar.gz:
+  object_id: 56f2699e-cf49-4873-8f54-d0b1f6ca647a
+  sha: 4e1338497b8da50b84307191bb3418e9ec5715d7
+  size: 1551070

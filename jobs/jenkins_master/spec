@@ -2,7 +2,7 @@
 name: jenkins_master
 packages:
 - jenkins
-- jre
+- java
 - nginx
 - git
 - cf-cli

@@ -1,0 +1,103 @@
+---
+packages:
+- name: bosh-cli
+  version: 1
+  sha1: 9e26d06b7fac9998a76db96cd46c1126b928f067
+  fingerprint: 419976f91953bdab37ce27472bfccc53d5566996
+  dependencies:
+  - ruby
+- name: cf-cli
+  version: 1
+  sha1: 7d5a97bac0eab09914dcc3701e7537a920beb11d
+  fingerprint: a098d425d2c8a5ed5b9875f57b9c8c2d038af8a0
+  dependencies: []
+- name: configure_jenkins
+  version: 1
+  sha1: b784492dbe64e4c60c5d888467ef938632713496
+  fingerprint: 83d1a87862ea09525592a200847afbaa4dbb5cba
+  dependencies:
+  - ruby
+- name: gcf
+  version: 1
+  sha1: e01b9f83ee24eb18aeb29b3b80d750dc6f8c90d6
+  fingerprint: ed51d81d1f521452e7897718be2c2fd9bafaf1c4
+  dependencies:
+  - golang
+- name: git
+  version: 1
+  sha1: d38a88d61cd0a91f16743bc4fb54b3f227e34d17
+  fingerprint: 495701a36b8f42f850a46e89c8a60cfd681083e1
+  dependencies: []
+- name: golang
+  version: 1
+  sha1: daec51022af6209799bcaf0b33bc548a758aa2b1
+  fingerprint: 984ce03375eb2cecbd90b4d42fa81e861658af4a
+  dependencies: []
+- name: java
+  version: 1
+  sha1: 17b2fef12b73df9981896f3de86739322309deea
+  fingerprint: 5d0b1d9c3a8989da165e3b66476ea5db0b75ee3b
+  dependencies: []
+- name: jenkins
+  version: 1
+  sha1: 3bcb2e261ef8fb9c82f333431f2b89f35580e8ce
+  fingerprint: 302caba42402770ff3794549d5d0c4ec98675e7f
+  dependencies: []
+- name: libfontconfig
+  version: 1
+  sha1: 11f83ffb1e02c9cb0c95f589e7fa9f52b79aa5a5
+  fingerprint: 310952320627ae33e739721f9603e3f3b2b3d4d2
+  dependencies:
+  - libfreetype
+- name: libfreetype
+  version: 1
+  sha1: e362c7ac85a7b2bd0ae20ba5c32d56f8cb65d308
+  fingerprint: e667d087cb73dcc724ff4a5e31fee8ddb33028a2
+  dependencies: []
+- name: libyaml
+  version: 1
+  sha1: 5cb2fd76ae37eb4dcd92054c0e67eb3bb15df402
+  fingerprint: 2c8350bc6b60b7c50f2b9d7d19ed02e19b72bf38
+  dependencies: []
+- name: maven
+  version: 1
+  sha1: 2a110e63cb387a81bbb6bcb0e82620bb220b5349
+  fingerprint: 89d79a0a7487060558aad4748267410ccf0d9362
+  dependencies: []
+- name: nginx
+  version: 1
+  sha1: bb78454f75258094c4ca3aae2a639ffcc79909bd
+  fingerprint: 26d885e63185483dd70859bed5a0f14232f23e18
+  dependencies: []
+- name: ovftool
+  version: 1
+  sha1: 45472412194f5051674a804a7b5ebe2fe1c64efc
+  fingerprint: feedb61174174c1551350eb1f38dded056f66478
+  dependencies: []
+- name: phantomjs
+  version: 1
+  sha1: 205dccefc838f0f8fe62f23944a2067d4f2d44ed
+  fingerprint: 88104fb45493948a17292d95e541a4b1850eccf7
+  dependencies:
+  - libfontconfig
+- name: ruby
+  version: 1
+  sha1: e027c4d4ae4247a33cd3732ec09e6f524b382fcb
+  fingerprint: 4db9cfda7474ce27c2c0b4ba3785522a74d128ce
+  dependencies: []
+- name: spiff
+  version: 1
+  sha1: b623aebd777812f26d05e884407ace09e2271935
+  fingerprint: 5960cee4196ea3ca4ecddb77040df707dd668bd5
+  dependencies:
+  - golang
+  - git
+jobs:
+- name: jenkins_master
+  version: 1
+  fingerprint: 1024fcaad5b15979cd58728dd54ab7011f57e3ef
+  sha1: 7f39a6fe156de1ccd7e20d7313cb6617ccd99095
+commit_hash: 303097d6
+uncommitted_changes: true
+name: jenkins
+version: 2

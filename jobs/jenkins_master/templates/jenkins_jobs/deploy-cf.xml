@@ -20,13 +20,15 @@ Ie: ${CONFIG_REPO}/infrastructures/${INFRASTRUCTURE_DIR}</description>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>CF_RELEASE</name>
-          <description>HTTP(S) url to any &lt;a href=&quot;https://github.com/cloudfoundry/cf-release/tree/master/releases&quot;&gt;CF release yaml file.&lt;/a&gt;</description>
-          <defaultValue>https://raw.github.com/cloudfoundry/cf-release/master/releases/cf-159.yml</defaultValue>
+          <description>Path to the cf release yml file (MUST be within the cf-release git repo).
+This will automatically get checked out by default and be available at:
+/var/vcap/store/jenkins_master/workspace/deploy-cf/C3CI/cf-release</description>
+          <defaultValue>/var/vcap/store/jenkins_master/workspace/deploy-cf/C3CI/cf-release/releases/cf-160.yml</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>STEMCELL_URL</name>
           <description>HTTP(S) url to any &lt;a href=&quot;http://bosh_artifacts.cfapps.io/file_collections?type=stemcells&quot;&gt;BOSH Stemcell&lt;/a&gt; accessible to Jenkins.</description>
-          <defaultValue>http://bosh-jenkins-artifacts.s3.amazonaws.com/bosh-stemcell/aws/bosh-stemcell-1975-aws-xen-ubuntu.tgz</defaultValue>
+          <defaultValue>http://192.168.10.104/bosh-stemcell-2200-openstack-kvm-ubuntu-ft.tgz</defaultValue>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
@@ -34,7 +36,7 @@ Ie: ${CONFIG_REPO}/infrastructures/${INFRASTRUCTURE_DIR}</description>
       <autoRebuild>false</autoRebuild>
     </com.sonyericsson.rebuild.RebuildSettings>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.0.3">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.0.4">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -60,7 +62,7 @@ Ie: ${CONFIG_REPO}/infrastructures/${INFRASTRUCTURE_DIR}</description>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <triggers class="vector"/>
+  <triggers/>
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
@@ -86,6 +88,8 @@ gem install bundler -v 1.3.5
 
 (
 cd C3CI
+rm -Rf cf-release
+git clone https://github.com/cloudfoundry/cf-release.git
 bundle
 bundle exec rake cf:upload_and_deploy_release[\
 ${CF_RELEASE},\
@@ -106,13 +110,15 @@ ${STEMCELL_URL},\
       <descriptionForFailed>&lt;small&gt;&lt;ul&gt;&lt;li&gt;\4&lt;/li&gt;&lt;li&gt;\2&lt;/li&gt;&lt;li&gt;\1&lt;/li&gt;&lt;li&gt;\3&lt;/li&gt;&lt;/ul&gt;&lt;/small&gt;</descriptionForFailed>
       <setForMatrix>false</setForMatrix>
     </hudson.plugins.descriptionsetter.DescriptionSetterPublisher>
-    <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@2.22">
+    <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@2.24">
       <configs>
         <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
           <configs>
             <hudson.plugins.parameterizedtrigger.FileBuildParameters>
               <propertiesFile>tmp.var</propertiesFile>
               <failTriggerOnMissing>false</failTriggerOnMissing>
+              <useMatrixChild>false</useMatrixChild>
+              <onlyExactRuns>false</onlyExactRuns>
             </hudson.plugins.parameterizedtrigger.FileBuildParameters>
             <hudson.plugins.parameterizedtrigger.CurrentBuildParameters/>
           </configs>

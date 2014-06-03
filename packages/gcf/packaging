@@ -1,8 +1,15 @@
 set -e -x
 
-tarball=gcf/gcf-linux-amd64-12.2.14.tgz
+tarball=gcf/cf-linux-amd64-6.1.2.tgz
 
 tar -xvf ${tarball}
 
-cp -a cf ${BOSH_INSTALL_TARGET}/gcf
-chmod +x ${BOSH_INSTALL_TARGET}/gcf
+cp -a cf ${BOSH_INSTALL_TARGET}/
+chmod +x ${BOSH_INSTALL_TARGET}/cf
+
+# Support for legacy use of gcf command line tool
+if [[ -f ${BOSH_INSTALL_TARGET}/gcf ]]; then 
+    rm ${BOSH_INSTALL_TARGET}/gcf
+fi
+
+ln -s ${BOSH_INSTALL_TARGET}/cf ${BOSH_INSTALL_TARGET}/gcf

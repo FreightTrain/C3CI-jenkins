@@ -1,6 +1,8 @@
 ---
+meta:
+  description: the Cloud Foundry CLI
+  original-source: https://github.com/cloudfoundry/cli/releases
 name: gcf
-dependencies:
-- golang
+dependencies: []
 files:
-- gcf/gcf-linux-amd64-12.2.14.tgz
+- gcf/cf-linux-amd64-6.1.2.tgz

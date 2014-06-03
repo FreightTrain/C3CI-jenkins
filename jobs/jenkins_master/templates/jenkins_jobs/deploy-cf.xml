@@ -10,7 +10,7 @@
           <name>CF_MANIFEST</name>
           <description>Cloud Foundry BOSH Manifest.&lt;br&gt;
 Ie: ${CONFIG_REPO}/jobs/cf/${CF_MANIFEST}</description>
-          <defaultValue>cf-core.yml</defaultValue>
+          <defaultValue>cf-core-cf160+.yml</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>JOB_INFRASTRUCTURE_DIR</name>
@@ -23,7 +23,7 @@ Ie: ${CONFIG_REPO}/infrastructures/${INFRASTRUCTURE_DIR}</description>
           <description>Path to the cf release yml file (MUST be within the cf-release git repo).
 This will automatically get checked out by default and be available at:
 /var/vcap/store/jenkins_master/workspace/deploy-cf/C3CI/cf-release</description>
-          <defaultValue>/var/vcap/store/jenkins_master/workspace/deploy-cf/C3CI/cf-release/releases/cf-160.yml</defaultValue>
+          <defaultValue>/var/vcap/store/jenkins_master/workspace/deploy-cf/C3CI/cf-release/releases/cf-170.yml</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>STEMCELL_URL</name>
@@ -36,7 +36,7 @@ This will automatically get checked out by default and be available at:
       <autoRebuild>false</autoRebuild>
     </com.sonyericsson.rebuild.RebuildSettings>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.0.4">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.2.1">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -55,6 +55,7 @@ This will automatically get checked out by default and be available at:
       <hudson.plugins.git.extensions.impl.SubmoduleOption>
         <disableSubmodules>false</disableSubmodules>
         <recursiveSubmodules>true</recursiveSubmodules>
+        <trackingSubmodules>false</trackingSubmodules>
       </hudson.plugins.git.extensions.impl.SubmoduleOption>
     </extensions>
   </scm>

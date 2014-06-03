@@ -38,7 +38,7 @@ Defaults to the needed path for the spring-music app repo.</description>
       <autoRebuild>false</autoRebuild>
     </com.sonyericsson.rebuild.RebuildSettings>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.0.3">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.2.1">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -57,6 +57,7 @@ Defaults to the needed path for the spring-music app repo.</description>
       <hudson.plugins.git.extensions.impl.SubmoduleOption>
         <disableSubmodules>false</disableSubmodules>
         <recursiveSubmodules>true</recursiveSubmodules>
+        <trackingSubmodules>false</trackingSubmodules>
       </hudson.plugins.git.extensions.impl.SubmoduleOption>
     </extensions>
   </scm>
@@ -64,7 +65,7 @@ Defaults to the needed path for the spring-music app repo.</description>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <triggers class="vector"/>
+  <triggers/>
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
@@ -103,20 +104,20 @@ echo &quot;*************&quot;
 echo &quot;Removing existing manifest&quot;
 rm -fv manifest.yml
 
-gcf --version
-
-gcf login -a ${NYET_TARGET} -u ${NYET_ADMIN_USERNAME} -p ${NYET_ADMIN_PASSWORD} -o demo
+cf --version
+cf api --skip-ssl-validation ${NYET_TARGET}
+cf login -u ${NYET_ADMIN_USERNAME} -p ${NYET_ADMIN_PASSWORD}
 echo &quot;CREATING ORG ${APPTESTUUID}&quot;
-gcf create-org ${APPTESTUUID}
+cf create-org ${APPTESTUUID}
 echo &quot;CREATING SPACE ${APPTESTUUID}&quot;
-gcf create-space ${APPTESTUUID} -o ${APPTESTUUID}
-gcf target -o ${APPTESTUUID} -s ${APPTESTUUID}
+cf create-space ${APPTESTUUID} -o ${APPTESTUUID}
+cf target -o ${APPTESTUUID} -s ${APPTESTUUID}
 
 echo &quot;*************&quot;
 echo &quot;PUSHING APP  &quot;
 echo &quot;*************&quot;
 
-gcf push ${APPTESTUUID} -p ${TEST_APP_STARTPATH} -d `echo ${NYET_TARGET} | awk -F&quot;api.&quot; &apos;{print $2}&apos;` -m 1G 
+cf push ${APPTESTUUID} -p ${TEST_APP_STARTPATH} -d `echo ${NYET_TARGET} | awk -F&quot;api.&quot; &apos;{print $2}&apos;` -m 1G 
 
 echo &quot;****************&quot;
 echo &quot;BASIC APP TEST   &quot;
@@ -130,6 +131,9 @@ then
    #gcf delete-space -f ${APPTESTUUID}
    exit 0
 fi;
+
+cf delete-org ${APPTESTUUID}
+
 
 echo &quot;WEB RESPONSE NOT 200! Check Deployment!!&quot;
 echo &quot;APP UUID: ${APPDNSNAME}&quot;

@@ -71,3 +71,7 @@ gcf/cf-linux-amd64-6.1.2.tgz:
   object_id: d5b81d3f-3bba-4e05-890e-ef91f1456330
   sha: 2da718e8e33105ff5884f1e834b79650ab330803
   size: 3886903
+spiff/spiff_linux_amd64.zip:
+  object_id: 161dccf4-3df0-4749-a004-153f1e6fb1ea
+  sha: 66721af2530c9ee7d10c1c005ed0289ed4c6b402
+  size: 1452737

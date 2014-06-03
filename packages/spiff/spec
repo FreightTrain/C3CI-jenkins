@@ -1,7 +1,8 @@
 ---
+meta:
+  description: Spiff Cloud Foundry yaml merge too, pre-built
+  original-source: https://github.com/cloudfoundry-incubator/spiff/releases
 name: spiff 
 dependencies:
-- golang
-- git
 files:
-- golang/go1.1.2.linux-amd64-yacc-shaved.tar.gz
+- spiff/spiff_linux_amd64.zip

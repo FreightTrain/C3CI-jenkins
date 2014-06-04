@@ -127,13 +127,10 @@ if [ &quot;\`wget http://${APPDNSNAME} -O /dev/null -S --quiet 2&gt;&amp;1 | gre
 then 
    echo &quot;WEB RESPONSE IS 200 OK!&quot; 
    echo &quot;cleaning up...&quot;
-   gcf delete -f ${APPTESTUUID}
-   #gcf delete-space -f ${APPTESTUUID}
+   cf delete -f ${APPTESTUUID}
+   cf delete-org ${APPTESTUUID}
    exit 0
 fi;
-
-cf delete-org ${APPTESTUUID}
-
 
 echo &quot;WEB RESPONSE NOT 200! Check Deployment!!&quot;
 echo &quot;APP UUID: ${APPDNSNAME}&quot;

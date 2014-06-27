@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <hudson>
   <disabledAdministrativeMonitors/>
-  <version>1.509.2</version>
+  <version>1.532.1</version>
   <numExecutors>2</numExecutors>
   <mode>NORMAL</mode>
   <useSecurity>true</useSecurity>
@@ -26,7 +26,7 @@
       <filterQueue>false</filterQueue>
       <properties class="hudson.model.View$PropertyList"/>
     </hudson.model.AllView>
-    <se.diabol.jenkins.pipeline.DeliveryPipelineView plugin="delivery-pipeline-plugin@0.6.10">
+    <se.diabol.jenkins.pipeline.DeliveryPipelineView plugin="delivery-pipeline-plugin@0.8.0">
       <owner class="hudson" reference="../../.."/>
       <name>Pipeline</name>
       <filterExecutors>false</filterExecutors>
@@ -34,17 +34,18 @@
       <properties class="hudson.model.View$PropertyList"/>
       <componentSpecs>
         <se.diabol.jenkins.pipeline.DeliveryPipelineView_-ComponentSpec>
-          <name>Cloud Foundry</name>
-          <firstJob>stemcell-smoke-test</firstJob>
+          <name>Deploy Cloud Foundry</name>
+          <firstJob>deploy-cf</firstJob>
         </se.diabol.jenkins.pipeline.DeliveryPipelineView_-ComponentSpec>
       </componentSpecs>
-      <noOfPipelines>1</noOfPipelines>
+      <noOfPipelines>3</noOfPipelines>
       <showAggregatedPipeline>false</showAggregatedPipeline>
       <noOfColumns>1</noOfColumns>
       <sorting>none</sorting>
       <showAvatars>true</showAvatars>
-      <updateInterval>4</updateInterval>
+      <updateInterval>10</updateInterval>
       <showChanges>false</showChanges>
+      <allowManualTriggers>false</allowManualTriggers>
       <regexpFirstJobs/>
     </se.diabol.jenkins.pipeline.DeliveryPipelineView>
   </views>
@@ -76,7 +77,7 @@
           <string>LD_LIBRARY_PATH</string>
           <string>/var/vcap/packages/libfontconfig/lib/:/var/vcap/packages/libfreetype/lib/</string>
           <string>PATH</string>
-          <string>${PATH}:/var/vcap/packages/ruby/bin/:/var/vcap/packages/git/bin:/var/vcap/packages/phantomjs:/var/vcap/packages/bzr/bin:/var/vcap/packages/spiff/bin:/var/vcap/packages/gcf:/var/vcap/packages/ovftool:/var/vcap/packages/maven/bin</string>
+          <string>${PATH}:/var/vcap/packages/ruby/bin/:/var/vcap/packages/git/bin:/var/vcap/packages/phantomjs:/var/vcap/packages/bzr/bin:/var/vcap/packages/spiff/bin:/var/vcap/packages/gcf:/var/vcap/packages/maven/bin:/var/vcap/packages/spiff</string>
           <string>STEMCELL_DOWNLOAD_DIR</string>
           <string>${JENKINS_HOME}/tmp</string>
           <string>TMPDIR</string>

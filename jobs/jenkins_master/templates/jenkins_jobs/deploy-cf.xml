@@ -28,10 +28,14 @@ This will automatically get checked out by default and be available at:
         <hudson.model.StringParameterDefinition>
           <name>STEMCELL_URL</name>
           <description>HTTP(S) url to any &lt;a href=&quot;http://bosh_artifacts.cfapps.io/file_collections?type=stemcells&quot;&gt;BOSH Stemcell&lt;/a&gt; accessible to Jenkins.</description>
-          <defaultValue>http://192.168.10.104/bosh-stemcell-2200-openstack-kvm-ubuntu-ft.tgz</defaultValue>
+          <defaultValue>https://s3.amazonaws.com/bosh-jenkins-artifacts/bosh-stemcell/openstack/bosh-stemcell-2579-openstack-kvm-ubuntu-lucid.tgz</defaultValue>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
+    <se.diabol.jenkins.pipeline.PipelineProperty plugin="delivery-pipeline-plugin@0.8.0">
+      <taskName>Deploy Cloud Foundry</taskName>
+      <stageName>Deploy</stageName>
+    </se.diabol.jenkins.pipeline.PipelineProperty>
     <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.21">
       <autoRebuild>false</autoRebuild>
     </com.sonyericsson.rebuild.RebuildSettings>
@@ -111,7 +115,7 @@ ${STEMCELL_URL},\
       <descriptionForFailed>&lt;small&gt;&lt;ul&gt;&lt;li&gt;\4&lt;/li&gt;&lt;li&gt;\2&lt;/li&gt;&lt;li&gt;\1&lt;/li&gt;&lt;li&gt;\3&lt;/li&gt;&lt;/ul&gt;&lt;/small&gt;</descriptionForFailed>
       <setForMatrix>false</setForMatrix>
     </hudson.plugins.descriptionsetter.DescriptionSetterPublisher>
-    <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@2.24">
+    <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@2.25">
       <configs>
         <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
           <configs>

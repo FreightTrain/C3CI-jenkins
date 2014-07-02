@@ -28,13 +28,15 @@ templates:
   helpers/ctl_setup.sh: helpers/ctl_setup.sh
   helpers/ctl_utils.sh: helpers/ctl_utils.sh
 
-  config/nginx.conf.erb: config/nginx.conf
-  config/mime.types: config/mime.types
   config/config.xml.erb: config/config.xml
-  config/hudson.tasks.Maven.xml: config/hudson.tasks.Maven.xml
-  config/netrc.erb: config/netrc
   config/jenkins_plugins.conf.erb: config/jenkins_plugins.conf
-  config/hudson.plugins.s3.S3BucketPublisher.xml.erb: config/hudson.plugins.s3.S3BucketPublisher.xml
+  config/mime.types: config/mime.types
+  config/netrc.erb: config/netrc
+  config/nginx.conf.erb: config/nginx.conf
+
+  config-plugins/hudson.plugins.s3.S3BucketPublisher.xml.erb: config-plugins/hudson.plugins.s3.S3BucketPublisher.xml
+  config-plugins/hudson.tasks.Maven.xml: config-plugins/hudson.tasks.Maven.xml
+  config-plugins/hudson.plugins.throttleconcurrents.ThrottleJobProperty.xml: config-plugins/hudson.plugins.throttleconcurrents.ThrottleJobProperty.xml
 
   jenkins_jobs/deploy-cf.xml: jenkins_jobs/deploy-cf.xml
   jenkins_jobs/test-cf.xml: jenkins_jobs/test-cf.xml

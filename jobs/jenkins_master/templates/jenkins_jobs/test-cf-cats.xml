@@ -1,0 +1,193 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Run the &lt;a href=&quot;https://github.com/cloudfoundry/cf-acceptance-tests&quot;&gt;Cloud Foundry Acceptance Tests&lt;/a&gt; against Cloud Foundry.&lt;br&gt;&#xd;
+Currently skips:&#xd;
+&lt;ul&gt;&#xd;
+  &lt;li&gt;Diego&lt;/li&gt;&#xd;
+  &lt;li&gt;Broker SSO Tests&lt;/li&gt;&#xd;
+&lt;/ul&gt;&#xd;
+&#xd;
+</description>
+  <logRotator class="hudson.tasks.LogRotator">
+    <daysToKeep>300</daysToKeep>
+    <numToKeep>50</numToKeep>
+    <artifactDaysToKeep>-1</artifactDaysToKeep>
+    <artifactNumToKeep>-1</artifactNumToKeep>
+  </logRotator>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>JOB_INFRASTRUCTURE_DIR</name>
+          <description>Name of the infrastructure directory from which your &lt;a href=&quot;https://github.com/cloudfoundry/nyet#running-without-existing-organization&quot;&gt;NYET environment&lt;/a&gt; will be read.&lt;br&gt;
+Ie: ${CONFIG_REPO}/infrastructures/${INFRASTRUCTURE_DIR}/cf/nyet_ci.sh</description>
+          <defaultValue>${INFRASTRUCTURE_DIR}</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>CATS_TEST_VERSION</name>
+          <description></description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>v171</string>
+              <string>v172</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+    <se.diabol.jenkins.pipeline.PipelineProperty plugin="delivery-pipeline-plugin@0.8.0">
+      <taskName>Run CF CATS Tests</taskName>
+      <stageName>Validate</stageName>
+    </se.diabol.jenkins.pipeline.PipelineProperty>
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.21">
+      <autoRebuild>false</autoRebuild>
+    </com.sonyericsson.rebuild.RebuildSettings>
+    <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@1.8.2">
+      <maxConcurrentPerNode>1</maxConcurrentPerNode>
+      <maxConcurrentTotal>1</maxConcurrentTotal>
+      <categories>
+        <string>Deploy-Cloud-Foundry</string>
+      </categories>
+      <throttleEnabled>true</throttleEnabled>
+      <throttleOption>category</throttleOption>
+    </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.2.1">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <url>${CONFIG_REPO}</url>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>${CONFIG_REPO_BRANCH}</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="list"/>
+    <extensions>
+      <hudson.plugins.git.extensions.impl.CleanCheckout/>
+      <hudson.plugins.git.extensions.impl.SubmoduleOption>
+        <disableSubmodules>false</disableSubmodules>
+        <recursiveSubmodules>true</recursiveSubmodules>
+        <trackingSubmodules>false</trackingSubmodules>
+      </hudson.plugins.git.extensions.impl.SubmoduleOption>
+    </extensions>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>#!bash -e
+
+echo &quot; &quot; 
+echo &quot;***** ***** ***** ***** ***** ***** ***** ***** ***** ***** *****&quot;
+echo &quot; &quot; 
+echo &quot;Running setup tasks required before running tests...&quot;
+echo &quot; &quot; 
+echo &quot;***** ***** ***** ***** ***** ***** ***** ***** ***** ***** *****&quot;
+echo &quot; &quot; 
+
+# Setup golang 
+# Also make sure we do not have any old binaries in our GOPATH
+which go
+export GOROOT=&quot;/var/vcap/packages/golang&quot;
+echo &quot;GOROOT is ${GOROOT}&quot;
+go version
+echo &quot;Setting up GOPATH...&quot;
+export GOPATH=${WORKSPACE}/gopath
+if [[ -d ${GOPATH} ]]; then 
+  rm -rf ${GOPATH}
+fi
+mkdir -p &quot;${GOPATH}&quot;
+export GOPATH=&quot;${GOPATH}:${WORKSPACE}/cf-release/src/acceptance-tests/Godeps/_workspace&quot;
+echo &quot;GOPATH is ${GOPATH}&quot;
+
+# Make sure we kill any old cf-release checkouts to make sure we get the correct tests.
+if [[ -d ${WORKSPACE}/cf-release ]]; then 
+  rm -rf ${WORKSPACE}/cf-release
+fi
+
+# Getting the appropriate copy of the cats tests
+git clone https://github.com/cloudfoundry/cf-release
+cd cf-release 
+git fetch origin 
+git checkout ${CATS_TEST_VERSION}
+git submodule update --init src/acceptance-tests/
+
+source ${WORKSPACE}/infrastructures/${JOB_INFRASTRUCTURE_DIR}/cf/nyet_ci.sh
+echo &quot;NYET Target: ${NYET_TARGET}&quot;
+
+echo &quot; &quot;
+echo &quot;Creating config file to run cats tests...&quot;
+echo &quot; - Docs: https://github.com/cloudfoundry/cf-acceptance-tests#test-setup&quot;
+echo &quot; - File: ${JOB_URL}/ws/cats_config.json/*view*/&quot;
+
+cat &gt; &quot;${WORKSPACE}/cats_config.json&quot; &lt;&lt;EOF
+{
+  &quot;api&quot;: &quot;${NYET_TARGET}&quot;,
+  &quot;admin_user&quot;: &quot;${NYET_ADMIN_USERNAME}&quot;,
+  &quot;admin_password&quot;: &quot;${NYET_ADMIN_PASSWORD}&quot;,
+  &quot;apps_domain&quot;: &quot;tastle.dev.rdu.cpgpaas.net&quot;,
+  &quot;skip_ssl_validation&quot;: true
+}
+EOF
+
+export CONFIG=&quot;${WORKSPACE}/cats_config.json&quot;
+export CF_TRACE_BASENAME=&quot;cf_trace_&quot;
+
+echo &quot; &quot;
+echo &quot;Performing setup for CATS tests, for details see:&quot;
+echo &quot; - Setup: https://github.com/cloudfoundry/cf-acceptance-tests/blob/master/bin/goenv&quot;
+echo &quot; - Run: https://github.com/cloudfoundry/cf-acceptance-tests/blob/master/bin/test&quot;
+
+cd &quot;${WORKSPACE}/cf-release/src/acceptance-tests&quot; 
+pwd
+cats_dir=&quot;${WORKSPACE}/cf-release/src/acceptance-tests&quot; 
+local_gopath=&quot;${cats_dir}/Godeps/_workspace&quot;
+mkdir -p &quot;${local_gopath}/bin&quot;
+export GOPATH=&quot;${local_gopath}:${GOPATH}&quot;
+export PATH=&quot;${local_gopath}/bin:${PATH}&quot;
+go install -v github.com/onsi/ginkgo/ginkgo 
+
+# Make sure the libraries we need are in the GOPATH
+# See: https://github.com/cloudfoundry/cf-acceptance-tests/issues/18
+# Note this exits with non zero so we capture the return code.
+go get -u github.com/cloudfoundry/cf-acceptance-tests || : # Capture error
+
+# This patch is a hack to allow self signed certs. 
+# It is fixed in the master branch of the tests
+# However still effects the releases we are using.
+sso_helper_file=&quot;cf-release/src/acceptance-tests/services/helpers/sso.go&quot;
+echo &quot; &quot;
+echo &quot;Patching tests to allow self signed SSL certs (relevant only to CF170 &amp; 171&quot;
+echo &quot; - Issue: https://github.com/cloudfoundry/cf-acceptance-tests/issues/25&quot;
+echo &quot; - Locally patched file: ${JOB_URL}ws/${sso_helper_file}/*view*/&quot;
+sed -i &apos;s/curl := runner.Curl(url).Wait(DEFAULT_TIMEOUT)/curl := runner.Curl(url, `--insecure`).Wait(DEFAULT_TIMEOUT)/&apos; &quot;${WORKSPACE}/${sso_helper_file}&quot;
+
+echo &quot; &quot; 
+echo &quot;***** ***** ***** ***** ***** ***** ***** ***** ***** ***** *****&quot;
+echo &quot; &quot; 
+echo &quot;Running CATS tests...&quot;
+echo &quot; &quot; 
+echo &quot;***** ***** ***** ***** ***** ***** ***** ***** ***** ***** *****&quot;
+echo &quot; &quot; 
+
+ginkgo -r -skipPackage=diego -skip=SSO  -slowSpecThreshold=300
+</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers/>
+  <buildWrappers>
+    <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@0.4.0">
+      <colorMapName>xterm</colorMapName>
+    </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
+  </buildWrappers>
+</project>

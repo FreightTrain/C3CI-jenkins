@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>Run the Cloud Foundry &lt;a href=&quot;https://github.com/cloudfoundry/nyet&quot;&gt;NYET Tests&lt;/a&gt; against this Cloud Foundry install.</description>
+  <description>Run the &lt;a href=&quot;https://github.com/cloudfoundry-incubator/cf-smoke-tests&quot;&gt;Cloud Foundry Smoke Tests&lt;/a&gt; against Cloud Foundry.&lt;br&gt;</description>
   <logRotator class="hudson.tasks.LogRotator">
     <daysToKeep>300</daysToKeep>
     <numToKeep>50</numToKeep>
@@ -21,7 +21,7 @@ Ie: ${CONFIG_REPO}/infrastructures/${INFRASTRUCTURE_DIR}/cf/nyet_ci.sh</descript
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
     <se.diabol.jenkins.pipeline.PipelineProperty plugin="delivery-pipeline-plugin@0.8.0">
-      <taskName>Run CF NYET Tests</taskName>
+      <taskName>Run CF SMOKE Tests</taskName>
       <stageName>Validate</stageName>
     </se.diabol.jenkins.pipeline.PipelineProperty>
     <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.21">
@@ -70,57 +70,98 @@ Ie: ${CONFIG_REPO}/infrastructures/${INFRASTRUCTURE_DIR}/cf/nyet_ci.sh</descript
     <hudson.tasks.Shell>
       <command>#!bash -e
 
-GITHUB_BASE_URL=&quot;${GIT_URL}/tree/${GIT_COMMIT}&quot;
-GITHUB_NYET_ENV_URL=&quot;${GITHUB_BASE_URL}/infrastructures/${JOB_INFRASTRUCTURE_DIR}/cf/nyet_ci.sh&quot;
+# Generate a config file to run a particular smoke test suite
+function generate_config_file() {
 
-echo &quot;***********************&quot;
-echo &quot;NYET TARGET: &lt;a href=&apos;${GITHUB_NYET_ENV_URL}&apos;&gt;nyet_ci.sh&lt;/a&gt;&quot;
-echo &quot;***********************&quot;
-echo &quot;${DESC}&quot; 
-echo &quot;***********************&quot;
+cat &gt; &quot;${WORKSPACE}/smoke_config.json&quot; &lt;&lt;EOF
+{
+  &quot;suite_name&quot;: &quot;CF-Smoke-Tests&quot;,
+  &quot;api&quot;: &quot;${NYET_TARGET}&quot;,
+  &quot;apps_domain&quot;: &quot;${NYET_APPS_DOMAIN}&quot;,
+  &quot;user&quot;: &quot;${NYET_ADMIN_USERNAME}&quot;,
+  &quot;password&quot;: &quot;${NYET_ADMIN_PASSWORD}&quot;,
+  &quot;org&quot;: &quot;smoke-test&quot;,
+  &quot;space&quot;: &quot;smoke-test&quot;,
+  &quot;skip_ssl_validation&quot;: true
+}
+EOF
 
+export CONFIG=&quot;${WORKSPACE}/smoke_config.json&quot;
 
+}
 
-RUBY_VERSION=$(ruby -v | awk &apos;{print $2}&apos;)
-export GEM_HOME=/var/vcap/store/gems/$RUBY_VERSION/$JOB_NAME
-export GEM_PATH=$GEM_HOME
-export PATH=$PATH:$GEM_HOME/bin
-gem install bundler -v 1.3.5
+echo &quot; &quot; 
+echo &quot;Running setup tasks required before running tests...&quot;
+echo &quot;***** ***** ***** ***** ***** ***** ***** ***** ***** ***** *****&quot;
+echo &quot; &quot; 
 
-(
-source infrastructures/${JOB_INFRASTRUCTURE_DIR}/cf/nyet_ci.sh
+# Setup golang 
+# Also make sure we do not have any old binaries in our GOPATH
+which go
+export GOROOT=&quot;/var/vcap/packages/golang&quot;
+echo &quot;GOROOT is ${GOROOT}&quot;
+go version
+echo &quot;Setting up GOPATH...&quot;
+export GOPATH=${WORKSPACE}/gopath
+if [[ -d ${GOPATH} ]]; then 
+  rm -rf ${GOPATH}
+fi
+mkdir -p &quot;${GOPATH}&quot;
+export GOPATH=&quot;${GOPATH}:${WORKSPACE}/cf-release/src/acceptance-tests/Godeps/_workspace&quot;
+echo &quot;GOPATH is ${GOPATH}&quot;
+
+# Make sure we kill any old cf-smoke-tests checkouts to make sure we get the correct tests.
+if [[ -d ${WORKSPACE}/cf-smoke-tests ]]; then 
+  rm -rf ${WORKSPACE}/cf-smoke-tests
+fi
+
+# Getting the appropriate copy of the cats tests
+git clone https://github.com/cloudfoundry-incubator/cf-smoke-tests
+cd cf-smoke-tests
+git submodule update --init --recursive
+
+source ${WORKSPACE}/infrastructures/${JOB_INFRASTRUCTURE_DIR}/cf/nyet_ci.sh
 echo &quot;NYET Target: ${NYET_TARGET}&quot;
 
-cd C3CI/nyet
+echo &quot; &quot;
+echo &quot;Creating config file to run smoke tests...&quot;
+echo &quot; - See: https://github.com/cloudfoundry-incubator/cf-smoke-tests/blob/master/smoke/config.go&quot;
 
-# Patch the NYET tests to work with self signed certs
-sed -i &apos;s/gcf api #{api_endpoint}/gcf api --skip-ssl-validation #{api_endpoint}/&apos; spec/loggregator_spec.rb
+generate_config_file
 
-bundle
-bundle exec rspec
-)</command>
+export CF_TRACE_BASENAME=&quot;cf_trace_&quot;
+local_gopath=$PWD/Godeps/_workspace
+mkdir -p $local_gopath/bin
+export GOPATH=$local_gopath:$GOPATH
+export PATH=$local_gopath/bin:$PATH
+
+go install -v github.com/onsi/ginkgo/ginkgo
+
+echo &quot; &quot; 
+echo &quot;Running SMOKE tests...&quot;
+echo &quot;***** ***** ***** ***** ***** ***** ***** ***** ***** ***** *****&quot;
+ginkgo -r -slowSpecThreshold=300
+rm ${CONFIG}
+</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
-    <hudson.plugins.descriptionsetter.DescriptionSetterPublisher plugin="description-setter@1.8">
-      <regexp>desc CF_RELEASE: (.*) JOB_INFRASTRUCTURE_DIR: (.*) CF_MANIFEST: (.*) STEMCELL: (.*)</regexp>
-      <regexpForFailed>desc  CF_RELEASE: (.*) JOB_INFRASTRUCTURE_DIR: (.*) CF_MANIFEST: (.*) STEMCELL: (.*)</regexpForFailed>
-      <description>&lt;small&gt;&lt;ul&gt;&lt;li&gt;\4&lt;/li&gt;&lt;li&gt;\2&lt;/li&gt;&lt;li&gt;\1&lt;/li&gt;&lt;li&gt;\3&lt;/li&gt;&lt;/ul&gt;&lt;/small&gt;</description>
-      <descriptionForFailed>&lt;small&gt;&lt;ul&gt;&lt;li&gt;\4&lt;/li&gt;&lt;li&gt;\2&lt;/li&gt;&lt;li&gt;\1&lt;/li&gt;&lt;li&gt;\3&lt;/li&gt;&lt;/ul&gt;&lt;/small&gt;</descriptionForFailed>
-      <setForMatrix>false</setForMatrix>
-    </hudson.plugins.descriptionsetter.DescriptionSetterPublisher>
     <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@2.25">
       <configs>
         <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
           <configs>
             <hudson.plugins.parameterizedtrigger.CurrentBuildParameters/>
           </configs>
-          <projects>test-cf-smoke, </projects>
+          <projects>deploy-custom-crud-apps, deploy-disk-test-app</projects>
           <condition>UNSTABLE_OR_BETTER</condition>
           <triggerWithNoParameters>false</triggerWithNoParameters>
         </hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
       </configs>
     </hudson.plugins.parameterizedtrigger.BuildTrigger>
   </publishers>
-  <buildWrappers/>
+  <buildWrappers>
+    <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@0.4.0">
+      <colorMapName>xterm</colorMapName>
+    </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
+  </buildWrappers>
 </project>

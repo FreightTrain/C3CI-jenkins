@@ -43,6 +43,8 @@ templates:
   jenkins_jobs/delete-deployment.xml: jenkins_jobs/delete-deployment.xml
   jenkins_jobs/deploy-custom-crud-apps.xml: jenkins_jobs/deploy-custom-crud-apps.xml
   jenkins_jobs/deploy-disk-test-app.xml: jenkins_jobs/deploy-disk-test-app.xml
+  jenkins_jobs/test-cf-smoke.xml: jenkins_jobs/test-cf-smoke.xml
+  jenkins_jobs/test-cf-cats.xml: jenkins_jobs/test-cf-cats.xml
 
 properties:
   jenkins.admin.password:

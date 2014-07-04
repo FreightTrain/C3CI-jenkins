@@ -20,25 +20,26 @@ case $1 in
     echo $$ > $PIDFILE
 
     mkdir -p $gems_home
-    chown vcap:vcap $gems_home -R
+    chown -R vcap:vcap ${gems_home}
+
     mkdir -p $JENKINS_HOME
 
-
     if [ -f "${JOB_DIR}/config/netrc" ]; then 
-        chown vcap:vcap ${JOB_DIR}/config/netrc
-        cp ${JOB_DIR}/config/netrc /home/vcap/.netrc
+        cp ${JOB_DIR}/config/netrc 
+        chown vcap:vcap /home/vcap/.netrc
     else
         echo "ERROR: Missing file $JOB_DIR/config/netrc cannot continue."
         exit 1    
     fi    
 
     if [ -d "${JOB_DIR}/config-plugins/" ]; then 
-        chown vcap:vcap ${JOB_DIR}/config-plugins/*
         cp -R ${JOB_DIR}/config-plugins/* ${JENKINS_HOME}/.
     else
         echo "ERROR: Missing config plugins directory ${JOB_DIR}/config-plugins/ cannot continue."
         exit 1
     fi
+
+    chown -R vcap:vcap ${JENKINS_HOME}/*
 
     flags=(
       -Djava.io.tmpdir="$TMPDIR"

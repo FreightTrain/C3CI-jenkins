@@ -20,14 +20,14 @@ Ie: ${CONFIG_REPO}/infrastructures/${INFRASTRUCTURE_DIR}/cf/nyet_ci.sh</descript
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
-    <se.diabol.jenkins.pipeline.PipelineProperty plugin="delivery-pipeline-plugin@0.8.0">
+    <se.diabol.jenkins.pipeline.PipelineProperty plugin="delivery-pipeline-plugin@0.8.2">
       <taskName>Run CF SMOKE Tests</taskName>
       <stageName>Validate</stageName>
     </se.diabol.jenkins.pipeline.PipelineProperty>
     <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.21">
       <autoRebuild>false</autoRebuild>
     </com.sonyericsson.rebuild.RebuildSettings>
-    <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@1.8.2">
+    <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@1.8.3">
       <maxConcurrentPerNode>1</maxConcurrentPerNode>
       <maxConcurrentTotal>1</maxConcurrentTotal>
       <categories>
@@ -37,7 +37,7 @@ Ie: ${CONFIG_REPO}/infrastructures/${INFRASTRUCTURE_DIR}/cf/nyet_ci.sh</descript
       <throttleOption>category</throttleOption>
     </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.2.1">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.2.2">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -72,6 +72,19 @@ Ie: ${CONFIG_REPO}/infrastructures/${INFRASTRUCTURE_DIR}/cf/nyet_ci.sh</descript
 
 # Generate a config file to run a particular smoke test suite
 function generate_config_file() {
+
+if [ ! ${NYET_TARGET} ]; then
+    echo &quot;NYET_TARGET missing from nyet_ci.sh.&quot; &amp;&amp; exit 1
+fi
+if [ ! ${NYET_APPS_DOMAIN} ]; then
+    echo &quot;NYET_APPS_DOMAIN  missing from nyet_ci.sh.&quot; &amp;&amp; exit 1
+fi
+if [ ! ${NYET_ADMIN_USERNAME} ]; then
+    echo &quot;NYET_ADMIN_USERNAME  missing from nyet_ci.sh.&quot; &amp;&amp; exit 1
+fi
+if [ ! ${NYET_ADMIN_PASSWORD} ]; then
+    echo &quot;NYET_ADMIN_PASSWORD  missing from nyet_ci.sh.&quot; &amp;&amp; exit 1
+fi
 
 cat &gt; &quot;${WORKSPACE}/smoke_config.json&quot; &lt;&lt;EOF
 {
@@ -110,18 +123,10 @@ mkdir -p &quot;${GOPATH}&quot;
 export GOPATH=&quot;${GOPATH}:${WORKSPACE}/cf-release/src/acceptance-tests/Godeps/_workspace&quot;
 echo &quot;GOPATH is ${GOPATH}&quot;
 
-# Make sure we kill any old cf-smoke-tests checkouts to make sure we get the correct tests.
-if [[ -d ${WORKSPACE}/cf-smoke-tests ]]; then 
-  rm -rf ${WORKSPACE}/cf-smoke-tests
-fi
-
-# Getting the appropriate copy of the cats tests
-git clone https://github.com/cloudfoundry-incubator/cf-smoke-tests
-cd cf-smoke-tests
-git submodule update --init --recursive
+# Use the version of the smoke tests pinned in C3CI
+cd ${WORKSPACE}/C3CI/cf-smoke-tests
 
 source ${WORKSPACE}/infrastructures/${JOB_INFRASTRUCTURE_DIR}/cf/nyet_ci.sh
-echo &quot;NYET Target: ${NYET_TARGET}&quot;
 
 echo &quot; &quot;
 echo &quot;Creating config file to run smoke tests...&quot;

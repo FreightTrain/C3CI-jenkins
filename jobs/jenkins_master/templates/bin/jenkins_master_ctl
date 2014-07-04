@@ -23,10 +23,22 @@ case $1 in
     chown vcap:vcap $gems_home -R
     mkdir -p $JENKINS_HOME
 
-    cp $JOB_DIR/config/netrc /home/vcap/.netrc
-    chown vcap:vcap /home/vcap/.netrc
-    cp $JOB_DIR/config/hudson.plugins.s3.S3BucketPublisher.xml ${JENKINS_HOME}/
-    chown vcap:vcap ${JENKINS_HOME}/hudson.plugins.s3.S3BucketPublisher.xml
+
+    if [ -f "${JOB_DIR}/config/netrc" ]; then 
+        chown vcap:vcap ${JOB_DIR}/config/netrc
+        cp ${JOB_DIR}/config/netrc /home/vcap/.netrc
+    else
+        echo "ERROR: Missing file $JOB_DIR/config/netrc cannot continue."
+        exit 1    
+    fi    
+
+    if [ -d "${JOB_DIR}/config-plugins/" ]; then 
+        chown vcap:vcap ${JOB_DIR}/config-plugins/*
+        cp -R ${JOB_DIR}/config-plugins/* ${JENKINS_HOME}/.
+    else
+        echo "ERROR: Missing config plugins directory ${JOB_DIR}/config-plugins/ cannot continue."
+        exit 1
+    fi
 
     flags=(
       -Djava.io.tmpdir="$TMPDIR"

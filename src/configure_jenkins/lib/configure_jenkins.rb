@@ -1,6 +1,7 @@
 #!/var/vcap/packages/ruby/bin/ruby
 
 require 'daemons'
+require 'time'
 require 'net/http'
 
 require_relative './configurator'
@@ -27,7 +28,8 @@ end
 Daemons.run_proc("configure_jenkins.rb",options) do
   loop do
     unless jenkins_available?
-      $stderr.puts 'Jenkins not available'
+
+      $stderr.puts  Time.now.utc.iso8601 + ' Jenkins not available'
       sleep 10 and exit! 1
     end
     space_separated_plugins = File.readlines(plugins_conf).first

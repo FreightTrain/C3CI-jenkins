@@ -37,14 +37,14 @@ Ie: ${CONFIG_REPO}/infrastructures/${INFRASTRUCTURE_DIR}/cf/nyet_ci.sh</descript
         </hudson.model.ChoiceParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
-    <se.diabol.jenkins.pipeline.PipelineProperty plugin="delivery-pipeline-plugin@0.8.0">
+    <se.diabol.jenkins.pipeline.PipelineProperty plugin="delivery-pipeline-plugin@0.8.2">
       <taskName>Run CF CATS Tests</taskName>
       <stageName>Validate</stageName>
     </se.diabol.jenkins.pipeline.PipelineProperty>
     <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.21">
       <autoRebuild>false</autoRebuild>
     </com.sonyericsson.rebuild.RebuildSettings>
-    <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@1.8.2">
+    <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@1.8.3">
       <maxConcurrentPerNode>1</maxConcurrentPerNode>
       <maxConcurrentTotal>1</maxConcurrentTotal>
       <categories>
@@ -54,7 +54,7 @@ Ie: ${CONFIG_REPO}/infrastructures/${INFRASTRUCTURE_DIR}/cf/nyet_ci.sh</descript
       <throttleOption>category</throttleOption>
     </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.2.1">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.2.2">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -87,11 +87,43 @@ Ie: ${CONFIG_REPO}/infrastructures/${INFRASTRUCTURE_DIR}/cf/nyet_ci.sh</descript
     <hudson.tasks.Shell>
       <command>#!bash -e
 
-echo &quot; &quot; 
-echo &quot;***** ***** ***** ***** ***** ***** ***** ***** ***** ***** *****&quot;
+# Generate a config file to run the cats tests
+function generate_config_file() {
+
+echo &quot; &quot;
+echo &quot;Creating config file to run cats tests...&quot;
+echo &quot; - Docs: https://github.com/cloudfoundry/cf-acceptance-tests#test-setup&quot;
+echo &quot; - File: ${JOB_URL}/ws/cats_config.json/*view*/&quot;
+
+if [ ! ${NYET_TARGET} ]; then
+    echo &quot;NYET_TARGET missing from nyet_ci.sh.&quot; &amp;&amp; exit 1
+fi
+if [ ! ${NYET_APPS_DOMAIN} ]; then
+    echo &quot;NYET_APPS_DOMAIN  missing from nyet_ci.sh.&quot; &amp;&amp; exit 1
+fi
+if [ ! ${NYET_ADMIN_USERNAME} ]; then
+    echo &quot;NYET_ADMIN_USERNAME  missing from nyet_ci.sh.&quot; &amp;&amp; exit 1
+fi
+if [ ! ${NYET_ADMIN_PASSWORD} ]; then
+    echo &quot;NYET_ADMIN_PASSWORD  missing from nyet_ci.sh.&quot; &amp;&amp; exit 1
+fi
+
+cat &gt; &quot;${WORKSPACE}/cats_config.json&quot; &lt;&lt;EOF
+{
+  &quot;api&quot;: &quot;${NYET_TARGET}&quot;,
+  &quot;admin_user&quot;: &quot;${NYET_ADMIN_USERNAME}&quot;,
+  &quot;admin_password&quot;: &quot;${NYET_ADMIN_PASSWORD}&quot;,
+  &quot;apps_domain&quot;: &quot;${NYET_APPS_DOMAIN}&quot;,
+  &quot;skip_ssl_validation&quot;: true
+}
+EOF
+
+export CONFIG=&quot;${WORKSPACE}/cats_config.json&quot;
+}
+
+
 echo &quot; &quot; 
 echo &quot;Running setup tasks required before running tests...&quot;
-echo &quot; &quot; 
 echo &quot;***** ***** ***** ***** ***** ***** ***** ***** ***** ***** *****&quot;
 echo &quot; &quot; 
 
@@ -125,22 +157,8 @@ git submodule update --init src/acceptance-tests/
 source ${WORKSPACE}/infrastructures/${JOB_INFRASTRUCTURE_DIR}/cf/nyet_ci.sh
 echo &quot;NYET Target: ${NYET_TARGET}&quot;
 
-echo &quot; &quot;
-echo &quot;Creating config file to run cats tests...&quot;
-echo &quot; - Docs: https://github.com/cloudfoundry/cf-acceptance-tests#test-setup&quot;
-echo &quot; - File: ${JOB_URL}/ws/cats_config.json/*view*/&quot;
+generate_config_file
 
-cat &gt; &quot;${WORKSPACE}/cats_config.json&quot; &lt;&lt;EOF
-{
-  &quot;api&quot;: &quot;${NYET_TARGET}&quot;,
-  &quot;admin_user&quot;: &quot;${NYET_ADMIN_USERNAME}&quot;,
-  &quot;admin_password&quot;: &quot;${NYET_ADMIN_PASSWORD}&quot;,
-  &quot;apps_domain&quot;: &quot;tastle.dev.rdu.cpgpaas.net&quot;,
-  &quot;skip_ssl_validation&quot;: true
-}
-EOF
-
-export CONFIG=&quot;${WORKSPACE}/cats_config.json&quot;
 export CF_TRACE_BASENAME=&quot;cf_trace_&quot;
 
 echo &quot; &quot;
@@ -173,10 +191,7 @@ echo &quot; - Locally patched file: ${JOB_URL}ws/${sso_helper_file}/*view*/&quot
 sed -i &apos;s/curl := runner.Curl(url).Wait(DEFAULT_TIMEOUT)/curl := runner.Curl(url, `--insecure`).Wait(DEFAULT_TIMEOUT)/&apos; &quot;${WORKSPACE}/${sso_helper_file}&quot;
 
 echo &quot; &quot; 
-echo &quot;***** ***** ***** ***** ***** ***** ***** ***** ***** ***** *****&quot;
-echo &quot; &quot; 
 echo &quot;Running CATS tests...&quot;
-echo &quot; &quot; 
 echo &quot;***** ***** ***** ***** ***** ***** ***** ***** ***** ***** *****&quot;
 echo &quot; &quot; 
 

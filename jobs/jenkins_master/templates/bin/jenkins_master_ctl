@@ -25,7 +25,7 @@ case $1 in
     mkdir -p $JENKINS_HOME
 
     if [ -f "${JOB_DIR}/config/netrc" ]; then 
-        cp ${JOB_DIR}/config/netrc 
+        cp ${JOB_DIR}/config/netrc /home/vcap/.netrc
         chown vcap:vcap /home/vcap/.netrc
     else
         echo "ERROR: Missing file $JOB_DIR/config/netrc cannot continue."

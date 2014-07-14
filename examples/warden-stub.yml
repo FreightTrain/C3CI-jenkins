@@ -1,0 +1,19 @@
+properties:
+  jenkins:
+    admin:
+      password: c1oudc0w
+  github:
+    username: admin
+    password: c1oudc0w
+  amazon:
+    accesskey: 1234567
+    secretkey: c1oudc0w
+    encrypted_secretkey: w0cdou1c
+  bosh:
+    micro_ip: 127.0.0.1
+  jenkins_jobs:
+    config_git_repository:
+      giturl: git://example.com
+      branch: master
+    infrastructure_directory: warden
+

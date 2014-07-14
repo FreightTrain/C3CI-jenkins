@@ -1,0 +1,18 @@
+properties:
+  jenkins:
+    admin:
+      password: (( merge ))
+  github:
+    username: (( merge ))
+    password: (( merge ))
+  amazon:
+    accesskey: (( merge ))
+    secretkey: (( merge ))
+    encrypted_secretkey: (( merge ))
+  bosh:
+    micro_ip: (( merge ))
+  jenkins_jobs:
+    config_git_repository:
+      giturl: (( merge ))
+      branch: (( merge ))
+    infrastructure_directory: (( merge ))

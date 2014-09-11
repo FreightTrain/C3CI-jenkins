@@ -38,24 +38,15 @@ This will automatically get checked out by default and be available at:
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
-    <se.diabol.jenkins.pipeline.PipelineProperty plugin="delivery-pipeline-plugin@0.8.0">
+    <se.diabol.jenkins.pipeline.PipelineProperty plugin="delivery-pipeline-plugin@0.8.6">
       <taskName>Deploy Cloud Foundry</taskName>
       <stageName>Deploy</stageName>
     </se.diabol.jenkins.pipeline.PipelineProperty>
-    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.21">
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.22">
       <autoRebuild>false</autoRebuild>
     </com.sonyericsson.rebuild.RebuildSettings>
-    <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@1.8.2">
-      <maxConcurrentPerNode>1</maxConcurrentPerNode>
-      <maxConcurrentTotal>1</maxConcurrentTotal>
-      <categories>
-        <string>Deploy-Cloud-Foundry</string>
-      </categories>
-      <throttleEnabled>true</throttleEnabled>
-      <throttleOption>category</throttleOption>
-    </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.2.1">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.2.5">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -105,9 +96,18 @@ export GEM_HOME=/var/vcap/store/gems/$RUBY_VERSION/$JOB_NAME
 export GEM_PATH=$GEM_HOME
 export PATH=$PATH:$GEM_HOME/bin
 gem install bundler -v 1.3.5
+gem install bosh_cli
 
 (
 cd C3CI
+rm -Rf sensu-client-boshrelease
+git clone https://github.com/FreightTrain/sensu-client-boshrelease.git
+cd sensu-client-boshrelease 
+bosh -n target https://${BOSH_MICRO_IP}:25555 
+bosh -n login admin admin
+bosh -n create release --force
+bosh -n upload release --rebase || echo &quot;Rebase not needed. Sensu_release hasn&apos;t changed. HACK. FIXME&quot;
+cd ..
 rm -Rf cf-release
 git clone https://github.com/cloudfoundry/cf-release.git
 bundle
@@ -123,7 +123,7 @@ ${STEMCELL_URL},\
     </hudson.tasks.Shell>
   </builders>
   <publishers>
-    <hudson.plugins.descriptionsetter.DescriptionSetterPublisher plugin="description-setter@1.8">
+    <hudson.plugins.descriptionsetter.DescriptionSetterPublisher plugin="description-setter@1.9">
       <regexp>desc CF_RELEASE: (.*) JOB_INFRASTRUCTURE_DIR: (.*) CF_MANIFEST: (.*) STEMCELL: (.*)</regexp>
       <regexpForFailed>desc  CF_RELEASE: (.*) JOB_INFRASTRUCTURE_DIR: (.*) CF_MANIFEST: (.*) STEMCELL: (.*)</regexpForFailed>
       <description>&lt;small&gt;&lt;ul&gt;&lt;li&gt;\4&lt;/li&gt;&lt;li&gt;\2&lt;/li&gt;&lt;li&gt;\1&lt;/li&gt;&lt;li&gt;\3&lt;/li&gt;&lt;/ul&gt;&lt;/small&gt;</description>

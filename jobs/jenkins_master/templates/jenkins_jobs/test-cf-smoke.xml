@@ -20,24 +20,15 @@ Ie: ${CONFIG_REPO}/infrastructures/${INFRASTRUCTURE_DIR}/cf/nyet_ci.sh</descript
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
-    <se.diabol.jenkins.pipeline.PipelineProperty plugin="delivery-pipeline-plugin@0.8.2">
+    <se.diabol.jenkins.pipeline.PipelineProperty plugin="delivery-pipeline-plugin@0.8.6">
       <taskName>Run CF SMOKE Tests</taskName>
       <stageName>Validate</stageName>
     </se.diabol.jenkins.pipeline.PipelineProperty>
-    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.21">
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.22">
       <autoRebuild>false</autoRebuild>
     </com.sonyericsson.rebuild.RebuildSettings>
-    <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@1.8.3">
-      <maxConcurrentPerNode>1</maxConcurrentPerNode>
-      <maxConcurrentTotal>1</maxConcurrentTotal>
-      <categories>
-        <string>Deploy-Cloud-Foundry</string>
-      </categories>
-      <throttleEnabled>true</throttleEnabled>
-      <throttleOption>category</throttleOption>
-    </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.2.2">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.2.5">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -56,7 +47,7 @@ Ie: ${CONFIG_REPO}/infrastructures/${INFRASTRUCTURE_DIR}/cf/nyet_ci.sh</descript
       <hudson.plugins.git.extensions.impl.SubmoduleOption>
         <disableSubmodules>false</disableSubmodules>
         <recursiveSubmodules>true</recursiveSubmodules>
-        <trackingSubmodules>false</trackingSubmodules>
+        <trackingSubmodules>true</trackingSubmodules>
       </hudson.plugins.git.extensions.impl.SubmoduleOption>
     </extensions>
   </scm>
@@ -164,9 +155,5 @@ rm ${CONFIG}
       </configs>
     </hudson.plugins.parameterizedtrigger.BuildTrigger>
   </publishers>
-  <buildWrappers>
-    <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@0.4.0">
-      <colorMapName>xterm</colorMapName>
-    </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
-  </buildWrappers>
+  <buildWrappers/>
 </project>

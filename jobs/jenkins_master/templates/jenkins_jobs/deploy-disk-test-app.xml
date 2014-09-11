@@ -38,24 +38,15 @@ Git clone will use the current directory (which is a UUID based temp dir per-run
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
-    <se.diabol.jenkins.pipeline.PipelineProperty plugin="delivery-pipeline-plugin@0.8.0">
+    <se.diabol.jenkins.pipeline.PipelineProperty plugin="delivery-pipeline-plugin@0.8.6">
       <taskName>Test Large Disk App</taskName>
       <stageName>Test</stageName>
     </se.diabol.jenkins.pipeline.PipelineProperty>
-    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.21">
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.22">
       <autoRebuild>false</autoRebuild>
     </com.sonyericsson.rebuild.RebuildSettings>
-    <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@1.8.2">
-      <maxConcurrentPerNode>1</maxConcurrentPerNode>
-      <maxConcurrentTotal>1</maxConcurrentTotal>
-      <categories>
-        <string>Deploy-Cloud-Foundry</string>
-      </categories>
-      <throttleEnabled>true</throttleEnabled>
-      <throttleOption>category</throttleOption>
-    </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.2.1">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.2.5">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -74,7 +65,7 @@ Git clone will use the current directory (which is a UUID based temp dir per-run
       <hudson.plugins.git.extensions.impl.SubmoduleOption>
         <disableSubmodules>false</disableSubmodules>
         <recursiveSubmodules>true</recursiveSubmodules>
-        <trackingSubmodules>false</trackingSubmodules>
+        <trackingSubmodules>true</trackingSubmodules>
       </hudson.plugins.git.extensions.impl.SubmoduleOption>
     </extensions>
   </scm>

@@ -65,7 +65,7 @@ This will automatically get checked out by default and be available at:
       <hudson.plugins.git.extensions.impl.SubmoduleOption>
         <disableSubmodules>false</disableSubmodules>
         <recursiveSubmodules>true</recursiveSubmodules>
-        <trackingSubmodules>false</trackingSubmodules>
+        <trackingSubmodules>true</trackingSubmodules>
       </hudson.plugins.git.extensions.impl.SubmoduleOption>
     </extensions>
   </scm>

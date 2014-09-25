@@ -1,5 +1,5 @@
 # BOSH deployed Jenkins for CloudFoundry CI
-
+# Editing for latest ruby
 Based on the Jenkins release by Dr Nic.
 
 Includes jobs to deploy CloudFoundry in an automated way. 

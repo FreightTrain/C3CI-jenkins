@@ -16,23 +16,25 @@ packages:
 - spiff
 - maven
 templates:
-  bin/jenkins_master_ctl: bin/jenkins_master_ctl
-  bin/configure_jenkins_ctl: bin/configure_jenkins_ctl
-  bin/monit_debugger: bin/monit_debugger
-  bin/nginx_ctl: bin/nginx_ctl
+  bin/jenkins_master_ctl:           bin/jenkins_master_ctl
+  bin/configure_jenkins_ctl:        bin/configure_jenkins_ctl
+  bin/monit_debugger:               bin/monit_debugger
+  bin/nginx_ctl:                    bin/nginx_ctl
+  bin/install_dependencies_ctl:     bin/install_dependencies_ctl
+  bin/install_dependencies.sh.erb:  bin/install_dependencies.sh
 
-  bin/install_dependencies_ctl: bin/install_dependencies_ctl
-  bin/install_dependencies.sh.erb: bin/install_dependencies.sh
-  data/properties.sh.erb: data/properties.sh
+  data/properties.sh.erb:           data/properties.sh
 
   helpers/ctl_setup.sh: helpers/ctl_setup.sh
   helpers/ctl_utils.sh: helpers/ctl_utils.sh
 
-  config/config.xml.erb: config/config.xml
-  config/jenkins_plugins.conf.erb: config/jenkins_plugins.conf
-  config/mime.types: config/mime.types
-  config/netrc.erb: config/netrc
-  config/nginx.conf.erb: config/nginx.conf
+  config/config.xml.erb:            config/config.xml
+  config/jenkins_plugins.conf.erb:  config/jenkins_plugins.conf
+  config/netrc.erb:                 config/netrc
+
+  config/nginx/nginx.conf.erb:  config/nginx.conf
+  config/nginx/htpasswd.erb:    config/.htpasswd
+  config/nginx/mime.types:      config/mime.types
 
   config-plugins/hudson.plugins.s3.S3BucketPublisher.xml.erb: config-plugins/hudson.plugins.s3.S3BucketPublisher.xml
   config-plugins/hudson.tasks.Maven.xml: config-plugins/hudson.tasks.Maven.xml
@@ -49,35 +51,58 @@ templates:
 properties:
   jenkins.admin.password:
     description: Admin user password
+
   jenkins.server.internal_http_port:
     description: "Internal http port between nginx & jenkins"
     default: 8088
+
   jenkins.server.ajp13_port:
     description: AJP13 protocal port
     default: 8009
+
   github.username:
     description: The GitHub username to use to pull
+
   github.password:
     description: The GitHub password to use to pull
+
   jenkins.plugins:
     description: Array of Jenkins plugins to install
     default: ['git']
+
   os.packages:
     description: Array of OS packages to install
     default: ['']
+
   amazon.accesskey:
     description: Amazon API access key
+
   amazon.secretkey:
     description: Amazon API secret key
+
   amazon.encrypted_secretkey:
     description: Amazon API secret key - obfuscated by Jenkins for storage
+
   bosh.micro_ip:
     description: BOSH micro for use by jenkins jobs
+
   jenkins_jobs.config_git_repository.giturl:
     description: Git URL from which to clone your C3CI config repository
+
   jenkins_jobs.config_git_repository.branch:
     description: Git branch from your config repository you want to be used
     default: '*/master'
+
   jenkins_jobs.infrastructure_directory:
     description: 'The infrastructure directory to use for deployments [CONFIG_GIT_REPO_ROOT]/infrastructures/${jenkins_jobs.infrastructure_directory}'
     default: aws-1
+
+  nginx.auth.enabled:
+    description: Enable Basic HTTP Auth in the NginX server to secure the Jenkins server.
+    default: false
+
+  nginx.auth.htpasswd:
+    description: Contents of the NginX htpassword file. Default user and password are jenkins. If not familiar, generate here- aspirine.org/htpasswd_en.html 
+    default: |
+      # From BOSH deployment
+      jenkins:{SSHA}FLwMWF+gc8jteqpPtdj+x+7D5ornekkg6gxSKw==

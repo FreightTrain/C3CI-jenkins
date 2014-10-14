@@ -63,6 +63,7 @@ module Jenkins
           expect(task).not_to receive(:restart_jenkins)
           task.execute
         end
+
         it 'copies the config over if the config is changed' do
           expect(task).to receive(:config_version).with('/var/lib/foo/config.xml').and_return('0.1.0')
           expect(task).to receive(:config_version).with('/var/lib/baz/config/config.xml').and_return('0.1.1')
@@ -70,6 +71,7 @@ module Jenkins
           allow(task).to receive(:restart_jenkins)
           task.execute
         end
+
         it 'restarts jenkins if the config is changed' do
           expect(task).to receive(:config_version).with('/var/lib/foo/config.xml').and_return('0.1.0')
           expect(task).to receive(:config_version).with('/var/lib/baz/config/config.xml').and_return('0.1.1')

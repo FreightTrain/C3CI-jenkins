@@ -1,0 +1,5 @@
+gemfile: src/configure_jenkins/Gemfile
+rvm:
+  - 1.9.3
+
+script: sh -c 'cd test' && bundle install && bundle exec rake

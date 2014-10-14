@@ -8,6 +8,7 @@ require_relative './configurator'
 
 include Daemons
 
+
 pid_dir = "/var/vcap/sys/run/jenkins_master/"
 log_dir = "/var/vcap/sys/log/jenkins_master/"
 plugins_conf = "/var/vcap/jobs/jenkins_master/config/jenkins_plugins.conf"
@@ -22,7 +23,7 @@ options = {
 }
 
 def jenkins_available?
-  Net::HTTP.get_response('localhost', '/').code.to_i == 200
+  Net::HTTP.get_response('localhost', "/", 8088).code.to_i == 200
 end
 
 Daemons.run_proc("configure_jenkins.rb",options) do

@@ -6,7 +6,7 @@ module Jenkins
     class DownloadCli
 
       def execute
-        res = Net::HTTP.get_response('localhost', '/jnlpJars/jenkins-cli.jar')
+        res = Net::HTTP.get_response('localhost', '/jnlpJars/jenkins-cli.jar' , 8088)
         raise 'Unable to download cli' unless res.code.to_i >= 200 and res.code.to_i < 400
         File.open(cli_path, 'w'){|f| f.write(res.body)}
         cli_path

@@ -36,7 +36,7 @@ module Jenkins
       end
 
       def update_plugin_list
-        system("curl  -L http://updates.jenkins-ci.org/update-center.json | sed '1d;$d' | curl -X POST -H 'Accept: application/json' -d @- http://localhost/updateCenter/byId/default/postBack")
+        system("curl  -L http://updates.jenkins-ci.org/update-center.json | sed '1d;$d' | curl -X POST -H 'Accept: application/json' -d @- http://localhost:8088/updateCenter/byId/default/postBack")
         raise "Problem updating Jenkins Plugin list" unless $?.success?
       end
 

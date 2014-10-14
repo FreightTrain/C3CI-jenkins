@@ -41,7 +41,9 @@ module Jenkins
       end
 
       def copy_maven_config_into_place
-        FileUtils.cp src_maven_config_path, existing_maven_config_path
+        if (File.exists? src_maven_config_path )
+            FileUtils.cp src_maven_config_path, existing_maven_config_path
+        end
       end
 
       def src_config_path

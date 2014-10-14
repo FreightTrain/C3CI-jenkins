@@ -1,6 +1,8 @@
 # BOSH deployed Jenkins for CloudFoundry CI
 
-Based on the Jenkins release by Dr Nic.
+[![Build Status](https://travis-ci.org/FreightTrain/C3CI-jenkins.svg?branch=master)](https://travis-ci.org/FreightTrain/C3CI-jenkins)
+
+Based on the [Jenkins release by Dr Nic](https://github.com/cloudfoundry-community/jenkins-boshrelease).
 
 Includes jobs to deploy CloudFoundry in an automated way. 
 

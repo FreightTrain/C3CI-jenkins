@@ -86,6 +86,10 @@ cat &gt; &quot;${WORKSPACE}/smoke_config.json&quot; &lt;&lt;EOF
   &quot;password&quot;: &quot;${NYET_ADMIN_PASSWORD}&quot;,
   &quot;org&quot;: &quot;smoke-test&quot;,
   &quot;space&quot;: &quot;smoke-test&quot;,
+  &quot;use_existing_org&quot;: false,
+  &quot;use_existing_space&quot;: false,
+  &quot;logging_app&quot;: &quot;&quot;,
+  &quot;runtime_app&quot;: &quot;&quot;,
   &quot;skip_ssl_validation&quot;: true
 }
 EOF

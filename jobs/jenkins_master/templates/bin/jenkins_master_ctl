@@ -10,6 +10,7 @@ export LANG=en_US.UTF-8
 export JENKINS_HOME=/var/vcap/store/jenkins_master
 java_binary=/var/vcap/packages/java/bin/java
 jenkins_war=/var/vcap/packages/jenkins/jenkins.war
+golang_packages=/var/vcap/packages/golang/pkg
 gems_home=/var/vcap/store/gems
 
 case $1 in
@@ -21,6 +22,7 @@ case $1 in
 
     mkdir -p $gems_home
     chown -R vcap:vcap ${gems_home}
+    chown -R vcap:vcap ${golang_packages}
 
     mkdir -p $JENKINS_HOME
 

@@ -4,3 +4,5 @@ builds:
     version: 1
   c3a9c03a77f627d402198e4b2b60ef1e0dcb5f27:
     version: 2
+  4e3d3935d4550b56731ecfa21c6dac956b4464ae:
+    version: '3'

@@ -5,4 +5,4 @@ meta:
 name: gcf
 dependencies: []
 files:
-- gcf/cf-linux-amd64-6.1.2.tgz
+- gcf/cf-linux-amd64-6.6.2.tgz

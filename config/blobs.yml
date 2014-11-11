@@ -83,3 +83,7 @@ ruby/ruby-2.0.0-p481.tar.gz:
   object_id: 4550ad91-fd67-49e7-baa3-62e13dbcf9d1
   sha: dded7b7349d59feb83d4f774b2ddec23eeab7978
   size: 13586757
+gcf/cf-linux-amd64-6.6.2.tgz:
+  object_id: fb4ce87a-6418-4832-8d1d-41b4740585f2
+  sha: 1bfc39581a8ecd42ee4082285ad1839a19841cd2
+  size: 4618532

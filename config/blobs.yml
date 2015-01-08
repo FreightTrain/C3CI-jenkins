@@ -87,3 +87,7 @@ gcf/cf-linux-amd64-6.6.2.tgz:
   object_id: fb4ce87a-6418-4832-8d1d-41b4740585f2
   sha: 1bfc39581a8ecd42ee4082285ad1839a19841cd2
   size: 4618532
+jenkins/jenkins-1.596.war:
+  object_id: 6811dea4-455f-47d9-9ad0-a6d827903ad8
+  sha: 82b77e3a34a6a5f2a35ce1e75dee0e9730b1fdc0
+  size: 68217618
